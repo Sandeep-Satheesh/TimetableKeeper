@@ -16,6 +16,6 @@ chronological order, and will automatically alert you and join the meetings by l
 for each session, a feature to automatically read the user's e-mails, to search for a particular subject pattern used by the meeting host for all their sessions and obtain the 
 meeting link automatically and join the meeting, is being planned as of now.
 
-The code is free for everyone to view, modidy, compile and/or re-distribute.
+The code is free for everyone to view, modify, compile and/or re-distribute.
 
 Thanks for reading!
