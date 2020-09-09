@@ -40,7 +40,7 @@ public class JoinMeetingFragment extends Fragment {
     Button btnJoinCurrentClass;
     LinearLayout linearLayout;
     SwipeRefreshLayout swipeRefreshLayout;
-
+    //Android stdio
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
