@@ -123,7 +123,7 @@ public class JoinMeetingFragment extends Fragment {
                         public void run() {
                             if (currentSub == null) {
                                 btnJoinCurrentClass.setVisibility(View.GONE);
-                                tvCurrentHour.setText("You have a short break now!");
+                                tvCurrentHour.setText("No classes going on currently!");
                                 tvFacultyName.setText("");
                                 return;
                             }
@@ -155,12 +155,12 @@ public class JoinMeetingFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            linearLayout.setGravity(Gravity.CENTER_VERTICAL);
                             tvCurrentHour.setText("Yay! You don't have any more classes scheduled for today!");
                             btnJoinCurrentClass.setVisibility(View.GONE);
                             tvNextClassHeader.setVisibility(View.GONE);
                             tvFacultyName.setText("");
                             subRV.setVisibility(View.GONE);
-                            linearLayout.setGravity(Gravity.CENTER);
                         }
                     });
                 }  else {
@@ -168,8 +168,8 @@ public class JoinMeetingFragment extends Fragment {
                         @Override
                         public void run() {
                             btnJoinCurrentClass.setVisibility(View.GONE);
-                            tvCurrentHour.setText("You have a short break now!");
-                            tvFacultyName.setText("Check your schedule below!");
+                            tvCurrentHour.setText("No classes going on currently!");
+                            tvFacultyName.setText("Check your schedule for the day below.");
                         }
                     });
                 }

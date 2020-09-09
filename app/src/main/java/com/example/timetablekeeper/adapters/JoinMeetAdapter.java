@@ -73,8 +73,9 @@ public class JoinMeetAdapter extends RecyclerView.Adapter<JoinMeetAdapter.Subjec
             }
             startHr = currentHour;
         }
-        else
+        else if (currentHour == -1)
             startHr = CommonUtils.determineLastPeriodNumber(c, System.currentTimeMillis());
+        else return;
 
             for (int i = startHr + 1; i <= totalHr; i++) {
                 for (SubjectObj s : subjectObjs) {

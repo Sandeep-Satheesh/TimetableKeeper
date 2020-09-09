@@ -16,14 +16,16 @@ public class CommonUtils {
         Date d = new Date(currentTimeMillis);
         int time = d.getHours() * 100 + d.getMinutes();
         int totalHrs = SharedPref.getInt(c, "totalHrs");
+        if (time < SharedPref.getInt(c, "hr1", "start"))
+            return -1;
         for (int i = 1; i <= totalHrs; i++) {
             int start = SharedPref.getInt(c, "hr" + i, "start"),
                     end = SharedPref.getInt(c, "hr" + i, "end");
             if (time >= start && time <= end) return i;
-            else if ((time >= end && time < SharedPref.getInt(c, "hr" + (i + 1), "start"))) return -1;
+            else if (i < totalHrs && (time >= end && time < SharedPref.getInt(c, "hr" + (i + 1), "start"))) return -1;
             else if (i == totalHrs && time > end) return 0;
         }
-        return -1;
+        return 0;
     }
 
     public static String getOrdinalStringFromInt(int i) {
