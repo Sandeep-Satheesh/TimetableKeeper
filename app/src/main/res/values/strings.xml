@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TimetableKeeper</string>
+    <string name="app_name">TimetableKeeper For Online Classes</string>
     <string name="no_subjects_added">No subjects added!</string>
     <string name="add_a_new_subject">Add A New Subject</string>
 </resources>
