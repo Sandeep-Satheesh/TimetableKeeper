@@ -36,7 +36,6 @@ public class SubjectsFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
     boolean viewedOnce = false;
     FloatingActionButton fabAddSubj;
-    AppCompatCheckBox cbPracticalSubj;
 
     @Nullable
     @Override
@@ -57,9 +56,6 @@ public class SubjectsFragment extends Fragment {
         subRV = v.findViewById(R.id.rv_subslist);
         subRV.setLayoutManager(new LinearLayoutManager(getContext()));
         subRV.setVisibility(View.INVISIBLE);
-
-        cbPracticalSubj = v.findViewById(R.id.cb_islabsubj);
-        cbPracticalSubj.setVisibility(View.GONE); //TODO: Implement support for lab hours later.
 
         swipeRefreshLayout = v.findViewById(R.id.swiperefresh_addsub);
         swipeRefreshLayout.setColorSchemeColors(ColorGenerator.DEFAULT.getRandomColor(), ColorGenerator.DEFAULT.getRandomColor(), ColorGenerator.DEFAULT.getRandomColor());

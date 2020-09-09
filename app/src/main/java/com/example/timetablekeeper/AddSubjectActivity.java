@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.example.timetablekeeper.models.SubjectObj;
 import com.example.timetablekeeper.utils.CommonUtils;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 public class AddSubjectActivity extends AppCompatActivity {
     TextInputEditText etSubCode, etSubName, etSubShortForm, etFacultyName, etZoomLink;
     TextView btnCancel, btnOK, btnSaveWithoutChangingTT;
+    AppCompatCheckBox cbPracticalSubj;
     boolean[] days;
     SubjectObj obj;
 
@@ -60,6 +62,8 @@ public class AddSubjectActivity extends AppCompatActivity {
         etSubShortForm = findViewById(R.id.et_subshortform);
         etFacultyName = findViewById(R.id.et_facultyname);
         etZoomLink = findViewById(R.id.et_zoomlink);
+        cbPracticalSubj = findViewById(R.id.cb_islabsubj);
+        cbPracticalSubj.setVisibility(View.GONE); //TODO: Implement support for lab hours later.
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
