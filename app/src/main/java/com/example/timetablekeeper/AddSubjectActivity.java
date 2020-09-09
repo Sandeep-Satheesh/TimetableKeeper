@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.timetablekeeper.models.SubjectObj;
+import com.example.timetablekeeper.utils.CommonUtils;
 import com.example.timetablekeeper.utils.SharedPref;
 import com.github.informramiz.daypickerlibrary.views.DayPickerDialog;
 import com.github.informramiz.daypickerlibrary.views.DayPickerView;
@@ -22,31 +23,52 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AddSubjectActivity extends AppCompatActivity {
+    TextInputEditText etSubCode, etSubName, etSubShortForm, etFacultyName, etZoomLink;
+    TextView btnCancel, btnOK, btnSaveWithoutChangingTT;
+    boolean[] days;
+    SubjectObj obj;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Add New Subject");
+        if (getIntent().getStringExtra("subCode") != null)
+            setTitle("Edit Subject Details:");
+        else
+            setTitle("Enter New Subject Details:");
         setContentView(R.layout.activity_addsub);
         initUI();
+        if (getIntent().getStringExtra("subCode") != null) {
+            String subCode = getIntent().getStringExtra("subCode");
+            obj = CommonUtils.getSubjectObjFromSubCode(getApplicationContext(), subCode);
+            etSubCode.setText(obj.getSubCode());
+            etFacultyName.setText(obj.getFacultyName());
+            etSubName.setText(obj.getSubName());
+            etZoomLink.setText(obj.getZoomLink());
+            etSubShortForm.setText(obj.getSubShortForm());
+            etSubCode.setEnabled(false);
+            btnOK.setText("Edit Timetable");
+        }
+        else btnSaveWithoutChangingTT.setVisibility(View.GONE);
     }
 
     private void initUI() {
-        TextView btnCancel = findViewById(R.id.cmd_cancel),
-                btnOK = findViewById(R.id.cmd_addsub);
-        final TextInputEditText etSubCode = findViewById(R.id.et_subcode),
-                etSubName = findViewById(R.id.et_subname),
-                etSubShortForm = findViewById(R.id.et_subshortform),
-                etFacultyName = findViewById(R.id.et_facultyname),
-                etZoomLink = findViewById(R.id.et_zoomlink);
+        btnCancel = findViewById(R.id.cmd_cancel);
+        btnOK = findViewById(R.id.cmd_addsub);
+        etSubCode = findViewById(R.id.et_subcode);
+        etSubName = findViewById(R.id.et_subname);
+        btnSaveWithoutChangingTT = findViewById(R.id.cmd_savewithout_tt_change);
+        etSubShortForm = findViewById(R.id.et_subshortform);
+        etFacultyName = findViewById(R.id.et_facultyname);
+        etZoomLink = findViewById(R.id.et_zoomlink);
 
-        btnOK.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (etZoomLink.getText() == null || etSubCode.getText() == null || etSubName.getText() == null || etFacultyName.getText() == null || etSubShortForm.getText() == null) {
                     Toast.makeText(getApplicationContext(), "There are one or more missing fields! Please fill them up to continue!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (etSubCode.getText().length() > 7 || !etSubCode.getText().toString().matches("[A-ZA-ZA-ZA-ZA-Z][0-90-90-90-9]")) {
+                if (etSubCode.getText().length() > 7 || !etSubCode.getText().toString().matches("[A-ZA-ZA-ZA-Z][0-90-90-90-9]")) {
                     Toast.makeText(getApplicationContext(), "Invalid subject code! Please re-enter!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -58,78 +80,24 @@ public class AddSubjectActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please enter a valid link!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                final HashMap<Integer, String> timings = new HashMap<>();
-                new DayPickerDialog.Builder(AddSubjectActivity.this)
-                        .setMultiSelectionAllowed(true)
-                        .setThemeResId(R.style.DayPickerTheme)
-                        .setOnDaysSelectedListener(new DayPickerDialog.OnDaysSelectedListener() {
-                            @Override
-                            public void onDaysSelected(DayPickerView dayPickerView, final boolean[] selectedDays) {
-                                if (selectedDays.length == 0) {
-                                    Toast.makeText(getApplicationContext(), "Please choose at least one day!", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                else if (selectedDays[0]) {
-                                    Toast.makeText(getApplicationContext(), "No classes on Sundays!", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                int ct = 0;
-                                for (boolean selectedDay : selectedDays) if (selectedDay) ct++;
-
-                                String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-                                for (int i = selectedDays.length - 1; i > 0; i--) {
-                                    if (!selectedDays[i]) continue;
-                                    final ArrayList<String> a = new ArrayList<>();
-                                    final int finalCt = ct;
-                                    final int finalI = i;
-                                    new AlertDialog.Builder(AddSubjectActivity.this)
-                                            .setTitle("Choose hour(s) on " + days[i] + ":")
-                                            .setMultiChoiceItems(new CharSequence[]{"1st Hour", "2nd Hour", "3rd Hour", "4th Hour", "5th Hour"}, null, new DialogInterface.OnMultiChoiceClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                                                    if (b) a.add(String.valueOf(i+1));
-                                                    else a.remove(String.valueOf(i+1));
-                                                }
-                                            })
-                                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int j) {
-                                                    StringBuilder s = new StringBuilder();
-                                                    for (int x = 0; x < a.size(); x++)
-                                                        s.append(a.get(x));
-                                                    timings.put((Integer) finalI, s.toString());
-                                                    if (timings.keySet().size() == finalCt) {
-                                                        insertSubjectIntoSharedPref(
-                                                                etSubCode.getText().toString(),
-                                                                etSubName.getText().toString(),
-                                                                etSubShortForm.getText().toString(),
-                                                                etFacultyName.getText().toString(),
-                                                                timings,
-                                                                etZoomLink.getText().toString()
-                                                        );
-                                                        finish();
-                                                    }
-                                                }
-                                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            new AlertDialog.Builder(AddSubjectActivity.this)
-                                                    .setTitle("Cancel adding subject?")
-                                                    .setMessage("You'll have to repeat this process again next time!")
-                                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                                            dialogInterface.dismiss();
-                                                            finish();
-                                                        }
-                                                    }).setNegativeButton("No", null).show();
-                                        }
-                                    }).show();
-                                }
-                            }
-                        }).build().show();
+                if (getIntent().getStringExtra("subCode") == null && CommonUtils.getSubjectObjFromSubCode(getApplicationContext(), etSubCode.getText().toString()) != null) {
+                    etSubCode.setError("There's already a subject with the same subject code!");
+                    return;
+                }
+                if (view == btnOK) setTimetable();
+                else {
+                    insertSubjectIntoSharedPref(etSubCode.getText().toString(),
+                            etSubName.getText().toString(),
+                            etSubShortForm.getText().toString(),
+                            etFacultyName.getText().toString(),
+                            obj.getTimetable(),
+                            etZoomLink.getText().toString());
+                    finish();
+                }
             }
-        });
+        };
+        btnSaveWithoutChangingTT.setOnClickListener(listener);
+        btnOK.setOnClickListener(listener);
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,10 +106,111 @@ public class AddSubjectActivity extends AppCompatActivity {
         });
     }
 
+    private void setTimetable() {
+        if (obj != null) {
+            days = new boolean[7];
+            for (int i = 0; i < 7; i++) {
+                if (obj.getTimetable().containsKey(i)) days[i] = true;
+            }
+        }
+        final HashMap<Integer, String> timings = new HashMap<>();
+        DayPickerDialog d = new DayPickerDialog.Builder(AddSubjectActivity.this)
+                .setMultiSelectionAllowed(true)
+                .setInitialSelectedDays(days)
+                .setThemeResId(R.style.DayPickerTheme)
+                .setOnDaysSelectedListener(new DayPickerDialog.OnDaysSelectedListener() {
+                    @Override
+                    public void onDaysSelected(DayPickerView dayPickerView, final boolean[] selectedDays) {
+                        if (selectedDays.length == 0) {
+                            Toast.makeText(getApplicationContext(), "Please choose at least one day!", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else if (selectedDays[0]) {
+                            Toast.makeText(getApplicationContext(), "No classes on Sundays!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        int ct = 0;
+                        for (boolean selectedDay : selectedDays) if (selectedDay) ct++;
+
+                        String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+                        for (int i = selectedDays.length - 1; i > 0; i--) {
+                            if (!selectedDays[i]) continue;
+                            final ArrayList<String> a = new ArrayList<>();
+                            final int finalCt = ct;
+                            final int finalI = i;
+                            boolean[] selectedHrs = null;
+                            int totalHrs = SharedPref.getInt(getApplicationContext(), "totalHrs");
+                            if (obj != null) {
+                                selectedHrs = new boolean[totalHrs];
+                                String s = obj.getTimetable().get(i);
+                                if (s != null) {
+                                    for (int h = 1; h <= totalHrs; h++) {
+                                        if (s.contains(String.valueOf(h)))
+                                            selectedHrs[h - 1] = true;
+                                    }
+                                }
+                            }
+                            CharSequence[] hoursList = new CharSequence[totalHrs];
+                            for (int j = 0; j < hoursList.length; j++) {
+                                hoursList[j] = CommonUtils.getOrdinalStringFromInt(j+1) + " Hour";
+                            }
+                            new AlertDialog.Builder(AddSubjectActivity.this, R.style.MagentaTextTheme)
+                                    .setTitle("Choose hour(s) on " + days[i] + ":")
+                                    .setMultiChoiceItems(hoursList, selectedHrs, new DialogInterface.OnMultiChoiceClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                                            if (b) a.add(String.valueOf(i + 1));
+                                            else a.remove(String.valueOf(i + 1));
+                                        }
+                                    })
+                                    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int j) {
+                                            StringBuilder s = new StringBuilder();
+                                            for (int x = 0; x < a.size(); x++)
+                                                s.append(a.get(x));
+                                            timings.put((Integer) finalI, s.toString());
+                                            if (timings.keySet().size() == finalCt) {
+                                                insertSubjectIntoSharedPref(
+                                                        etSubCode.getText().toString(),
+                                                        etSubName.getText().toString(),
+                                                        etSubShortForm.getText().toString(),
+                                                        etFacultyName.getText().toString(),
+                                                        timings,
+                                                        etZoomLink.getText().toString()
+                                                );
+                                                finish();
+                                            }
+                                        }
+                                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    new AlertDialog.Builder(AddSubjectActivity.this)
+                                            .setTitle("Cancel adding subject?")
+                                            .setMessage("You'll have to repeat this process again next time!")
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.dismiss();
+                                                    finish();
+                                                }
+                                            }).setNegativeButton("No", null).show();
+                                }
+                            }).setCancelable(false).show();
+                        }
+                    }
+                }).build();
+        d.setCancelable(false);
+        d.show();
+    }
+
     private void insertSubjectIntoSharedPref(String subCode, String subName, String subShortForm, String facultyName, HashMap<Integer, String> timings, String zoomLink) {
-        int subjCount = SharedPref.getInt(getApplicationContext(), "subj_count");
-        SharedPref.putInt(getApplicationContext(), "subj_count", subjCount + 1);
-        SharedPref.putBoolean(getApplicationContext(), "updateFlag", true);
+        int subIdx;
+        if (obj == null) {
+            subIdx = SharedPref.getInt(getApplicationContext(), "subj_count") + 1;
+            SharedPref.putInt(getApplicationContext(), "subj_count", subIdx);
+        } else
+            subIdx = CommonUtils.getSubjectObjIndexFromSubCode(getApplicationContext(), obj.getSubCode());
+
         SubjectObj obj = new SubjectObj(
                 facultyName,
                 subName,
@@ -152,6 +221,8 @@ public class AddSubjectActivity extends AppCompatActivity {
         );
         Gson gson = new Gson();
         String json = gson.toJson(obj);
-        SharedPref.putString(getApplicationContext(), String.valueOf(subjCount + 1), json);
+        SharedPref.putString(getApplicationContext(), String.valueOf(subIdx), json);
+        SharedPref.putBoolean(getApplicationContext(), "updateFlag1", true);
+        SharedPref.putBoolean(getApplicationContext(), "updateFlag2", true);
     }
 }

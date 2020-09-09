@@ -19,19 +19,77 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.example.timetablekeeper.R;
 import com.example.timetablekeeper.models.SubjectObj;
+import com.example.timetablekeeper.utils.CommonUtils;
 import com.example.timetablekeeper.utils.SharedPref;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class JoinMeetAdapter extends RecyclerView.Adapter<JoinMeetAdapter.SubjectsViewHolder> {
     ArrayList<SubjectObj> objs;
+    ArrayList<Integer> hours;
     Context c;
     TextDrawable.IBuilder builder;
 
+    public SubjectObj getNextSubject() {
+        if (objs != null && objs.size() > 0) return objs.get(0);
+        else return null;
+    }
+
+    public void clear() {
+        objs.clear();
+        hours.clear();
+        notifyDataSetChanged();
+    }
+    public SubjectObj getCurrentSub() {
+        return currentSub;
+    }
+
+    public int getCurrentDay() {
+        return currentDay;
+    }
+
+    public int getCurrentHour() {
+        return currentHour;
+    }
+
+    SubjectObj currentSub;
+    int currentDay, currentHour;
     public JoinMeetAdapter(Context c, ArrayList<SubjectObj> subjectObjs) {
-        objs = subjectObjs;
         this.c = c;
+        objs = new ArrayList<>();
+        currentDay = new Date(System.currentTimeMillis()).getDay();
+        currentHour = CommonUtils.determineCurrentPeriodNumber(c, System.currentTimeMillis());
+        hours = new ArrayList<>();
+        int totalHr = SharedPref.getInt(c, "totalHrs");
+        int startHr;
+        if (currentHour > 0) {
+            for (SubjectObj s : subjectObjs) {
+                if (s.getTimetable().get(currentDay) != null && s.getTimetable().get(currentDay).contains(String.valueOf(currentHour))) {
+                    currentSub = s;
+                    break;
+                }
+            }
+            startHr = currentHour;
+        }
+        else
+            startHr = CommonUtils.determineLastPeriodNumber(c, System.currentTimeMillis());
+
+            for (int i = startHr + 1; i <= totalHr; i++) {
+                for (SubjectObj s : subjectObjs) {
+                    String str = s.getTimetable().get(currentDay);
+                    if (str != null) {
+                        for (int j = 0; j < str.length(); j++) {
+                            if (str.substring(j, j+1).equals(String.valueOf(i))) {
+                                objs.add(s);
+                                hours.add(i);
+                            }
+                        }
+                    }
+                }
+            }
+
         builder = TextDrawable.builder()
                 .beginConfig()
                 .toUpperCase()
@@ -50,7 +108,7 @@ public class JoinMeetAdapter extends RecyclerView.Adapter<JoinMeetAdapter.Subjec
     public void onBindViewHolder(@NonNull JoinMeetAdapter.SubjectsViewHolder holder, int position) {
         SubjectObj obj = objs.get(position);
         holder.tvSubFullName.setText(String.format("%s - %s", obj.getSubCode(), obj.getSubName()));
-        holder.tvNextClassTime.setText("Faculty: " + obj.getFacultyName());
+        holder.tvNextClassTime.setText(CommonUtils.getOrdinalStringFromInt(hours.get(position)) + " hour");
         int col = ColorGenerator.MATERIAL.getColor(obj);
         TextDrawable d = builder.build(obj.getSubShortForm(), col);
         holder.ivSubShortForm.setImageDrawable(d);

@@ -1,18 +1,25 @@
 package com.example.timetablekeeper.fragments;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.example.timetablekeeper.AddSubjectActivity;
 import com.example.timetablekeeper.R;
 import com.example.timetablekeeper.adapters.AddSubjectAdapter;
@@ -26,6 +33,10 @@ import java.util.ArrayList;
 public class SubjectsFragment extends Fragment {
     RecyclerView subRV;
     volatile AddSubjectAdapter subRVAdapter;
+    SwipeRefreshLayout swipeRefreshLayout;
+    boolean viewedOnce = false;
+    FloatingActionButton fabAddSubj;
+    AppCompatCheckBox cbPracticalSubj;
 
     @Nullable
     @Override
@@ -35,15 +46,9 @@ public class SubjectsFragment extends Fragment {
         return v;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        new populateSubjectsList().execute();
-    }
-
     private void initUI(View v) {
-        FloatingActionButton b = v.findViewById(R.id.floatingActionButton);
-        b.setOnClickListener(new View.OnClickListener() {
+        fabAddSubj = v.findViewById(R.id.floatingActionButton);
+        fabAddSubj.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivityForResult(new Intent(view.getContext(), AddSubjectActivity.class), 1);
@@ -51,12 +56,38 @@ public class SubjectsFragment extends Fragment {
         });
         subRV = v.findViewById(R.id.rv_subslist);
         subRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        subRV.setVisibility(View.INVISIBLE);
+
+        cbPracticalSubj = v.findViewById(R.id.cb_islabsubj);
+        cbPracticalSubj.setVisibility(View.GONE); //TODO: Implement support for lab hours later.
+
+        swipeRefreshLayout = v.findViewById(R.id.swiperefresh_addsub);
+        swipeRefreshLayout.setColorSchemeColors(ColorGenerator.DEFAULT.getRandomColor(), ColorGenerator.DEFAULT.getRandomColor(), ColorGenerator.DEFAULT.getRandomColor());
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new populateSubjectsList().execute();
+            }
+        });
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && !viewedOnce) {
+            viewedOnce = true;
+            subRV.setVisibility(View.VISIBLE);
+            LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.rv_layoutanimation);
+            subRV.setLayoutAnimation(controller);
+            subRVAdapter.notifyDataSetChanged();
+            subRV.scheduleLayoutAnimation();
+        }
     }
 
     @Override
     public void onResume() {
-        if (SharedPref.getBoolean(getContext(), "updateFlag")) {
-            SharedPref.putBoolean(getContext(), "updateFlag", false);
+        if (!viewedOnce || SharedPref.getBoolean(getContext(), "updateFlag2")) {
+            SharedPref.putBoolean(getContext(), "updateFlag2", false);
             new populateSubjectsList().execute();
         }
         super.onResume();
@@ -87,7 +118,7 @@ public class SubjectsFragment extends Fragment {
             super.onPostExecute(aVoid);
             if (subRV != null && subRVAdapter != null) {
                 subRV.setAdapter(subRVAdapter);
-                subRVAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
             }
         }
     }

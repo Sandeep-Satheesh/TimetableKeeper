@@ -76,6 +76,6 @@
         android:layout_height="36dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/circle_bg"
-        android:backgroundTint="@color/red"
+        android:backgroundTint="@color/red1"
         android:src="@drawable/ic_deletesub" />
 </LinearLayout>

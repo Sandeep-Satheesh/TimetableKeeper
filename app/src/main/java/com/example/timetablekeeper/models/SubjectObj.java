@@ -9,6 +9,16 @@ public class SubjectObj {
     String subShortForm;
     String zoomLink;
 
+    public boolean isLabSubj() {
+        return isLabSubj;
+    }
+
+    public void setLabSubj(boolean labSubj) {
+        isLabSubj = labSubj;
+    }
+
+    boolean isLabSubj;
+
     public String getZoomLink() {
         return zoomLink;
     }

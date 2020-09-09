@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="80dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginStart="10dp"
     android:layout_marginLeft="10dp"
     android:layout_marginTop="5dp"
@@ -16,8 +17,8 @@
 
     <ImageView
         android:id="@+id/iv_subshortform"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="7dp"
@@ -61,13 +62,15 @@
     </LinearLayout>
 
     <ImageButton
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:id="@+id/ib_joinmeet"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/circle_bg"
-        android:backgroundTint="@android:color/holo_green_light"
-        android:src="@drawable/ic_joinmeet" />
+        android:src="@drawable/ic_joinmeet"
+        app:backgroundTint="@color/magenta"
+        android:elevation="6dp"
+        app:pressedTranslationZ="6dp" />
 
 </LinearLayout>

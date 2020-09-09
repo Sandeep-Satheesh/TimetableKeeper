@@ -2,6 +2,7 @@ package com.example.timetablekeeper.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.example.timetablekeeper.AddSubjectActivity;
 import com.example.timetablekeeper.R;
 import com.example.timetablekeeper.models.SubjectObj;
+import com.example.timetablekeeper.utils.CommonUtils;
 import com.example.timetablekeeper.utils.SharedPref;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class AddSubjectAdapter extends RecyclerView.Adapter<AddSubjectAdapter.SubjectsViewHolder> {
     ArrayList<SubjectObj> objs;
@@ -29,6 +34,12 @@ public class AddSubjectAdapter extends RecyclerView.Adapter<AddSubjectAdapter.Su
 
     public AddSubjectAdapter(Context c, ArrayList<SubjectObj> subjectObjs) {
         objs = subjectObjs;
+        Collections.sort(objs, new Comparator<SubjectObj>() {
+            @Override
+            public int compare(SubjectObj t2, SubjectObj t1) {
+                return t2.getSubCode().compareTo(t1.getSubCode());
+            }
+        });
         this.c = c;
         builder = TextDrawable.builder()
                 .beginConfig()
@@ -72,6 +83,12 @@ public class AddSubjectAdapter extends RecyclerView.Adapter<AddSubjectAdapter.Su
             btnEditSub = itemView.findViewById(R.id.ib_editsub);
             btnRemoveSub = itemView.findViewById(R.id.ib_remove_sub);
 
+            btnEditSub.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    c.startActivity(new Intent(c, AddSubjectActivity.class).putExtra("subCode", tvSubFullName.getText().toString().substring(0, tvSubFullName.getText().toString().indexOf(' '))));
+                }
+            });
             btnRemoveSub.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -82,19 +99,19 @@ public class AddSubjectAdapter extends RecyclerView.Adapter<AddSubjectAdapter.Su
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int x) {
                                     int ct = SharedPref.getInt(c, "subj_count");
-                                    int pos = -1;
                                     String k = tvSubFullName.getText().toString().substring(0, tvSubFullName.getText().toString().indexOf(' '));
-                                    for (int i = 1; i <= ct; i++) {
-                                        String idx = String.valueOf(i);
-                                        SubjectObj obj = new Gson().fromJson(SharedPref.getString(c, idx), SubjectObj.class);
-                                        if (obj.getSubCode().equals(k)){
-                                            pos = i;
-                                            break;
-                                        }
+                                    int pos = CommonUtils.getSubjectObjIndexFromSubCode(c, k);
+                                    if (objs.size() > 1) {
+                                        objs.remove(pos-1);
+                                        notifyItemRemoved(pos);
                                     }
-                                    objs.remove(pos-1);
-                                    notifyItemRemoved(pos-1);
+                                    else {
+                                        objs.clear();
+                                        notifyDataSetChanged();
+                                    }
                                     SharedPref.putInt(c, "subj_count", ct - 1);
+                                    SharedPref.putBoolean(c, "updateFlag1", true);
+                                    SharedPref.putBoolean(c, "updateFlag2", true);
                                 }
                             })
                             .setNegativeButton("No", null)

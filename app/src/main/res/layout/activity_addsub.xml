@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Subject Code"
+            android:singleLine="true"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -42,6 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Subject Name"
+            android:singleLine="true"
             android:textColorHint="@color/magenta"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -60,8 +62,9 @@
             android:id="@+id/et_subshortform"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColorHint="@color/magenta"
             android:hint="Subject Short Form"
+            android:singleLine="true"
+            android:textColorHint="@color/magenta"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -78,10 +81,11 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_facultyname"
-            android:textColorHighlight="@color/magenta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Faculty Name"
+            android:singleLine="true"
+            android:textColorHighlight="@color/magenta"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,12 +102,21 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_zoomlink"
-            android:textColorHighlight="@color/magenta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Class (Conference) Link"
+            android:singleLine="true"
+            android:textColorHighlight="@color/magenta"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:theme="@style/MagentaControl"
+        android:id="@+id/cb_islabsubj"
+        android:text="Is Lab Subject (Practical)" />
 
     <LinearLayout
         android:layout_marginBottom="10sp"
@@ -137,13 +150,31 @@
             android:paddingStart="5sp"
             android:textColor="@color/white"
             android:backgroundTint="@color/magenta"
+            android:layout_marginEnd="10sp"
+            android:layout_marginRight="10sp"
             android:paddingTop="5sp"
             android:paddingBottom="5sp"
             android:background="@drawable/roundedrect_bg"
+            android:id="@+id/cmd_savewithout_tt_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="Save" />
+
+        <TextView
             android:id="@+id/cmd_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:text="Cancel" />
+            android:layout_marginEnd="10sp"
+            android:layout_marginRight="10sp"
+            android:background="@drawable/roundedrect_bg"
+            android:backgroundTint="@color/magenta"
+            android:paddingStart="5sp"
+            android:paddingTop="5sp"
+            android:paddingEnd="5sp"
+            android:paddingBottom="5sp"
+            android:text="Cancel"
+            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>

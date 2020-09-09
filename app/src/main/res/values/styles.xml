@@ -9,6 +9,12 @@
     <style name="MagentaTextTheme" parent="Base.TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/magenta</item>
     </style>
+    <style name="MagentaControl" parent="Theme.AppCompat.Light">
+        <item name="android:textColor">@color/black</item>
+        <item name="colorPrimary">@color/magenta</item>
+        <item name="colorPrimaryDark">@color/magenta_dark</item>
+        <item name="colorAccent">@color/magenta</item>
+    </style>
     <style name="DayPickerTheme" parent="ThemeOverlay.AppCompat.DayNight">
         <item name="colorPrimary">@color/magenta</item>
         <item name="android:windowBackground">@color/white</item>
