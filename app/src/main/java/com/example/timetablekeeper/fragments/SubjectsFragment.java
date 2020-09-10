@@ -70,7 +70,7 @@ public class SubjectsFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && !viewedOnce) {
+        if (subRVAdapter != null && isVisibleToUser && !viewedOnce) {
             viewedOnce = true;
             subRV.setVisibility(View.VISIBLE);
             LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.rv_layoutanimation);
@@ -114,8 +114,8 @@ public class SubjectsFragment extends Fragment {
             super.onPostExecute(aVoid);
             if (subRV != null && subRVAdapter != null) {
                 subRV.setAdapter(subRVAdapter);
-                swipeRefreshLayout.setRefreshing(false);
             }
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 }

@@ -40,7 +40,7 @@ public class JoinMeetingFragment extends Fragment {
     Button btnJoinCurrentClass;
     LinearLayout linearLayout;
     SwipeRefreshLayout swipeRefreshLayout;
-    //Android stdio
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -198,12 +198,12 @@ public class JoinMeetingFragment extends Fragment {
                 subRV.setVisibility(View.VISIBLE);
                 subRV.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
                 LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.rv_layoutanimation);
                 subRV.setLayoutAnimation(controller);
                 adapter.notifyDataSetChanged();
                 subRV.scheduleLayoutAnimation();
             }
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 }

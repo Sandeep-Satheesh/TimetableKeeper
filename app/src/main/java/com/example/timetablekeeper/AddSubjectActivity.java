@@ -72,12 +72,23 @@ public class AddSubjectActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "There are one or more missing fields! Please fill them up to continue!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (etSubCode.getText().length() > 7 || !etSubCode.getText().toString().matches("[A-ZA-ZA-ZA-Z][0-90-90-90-9]")) {
+                else if (etZoomLink.getText().toString().isEmpty() || etSubCode.getText().toString().isEmpty() || etSubName.getText().toString().isEmpty() || etFacultyName.getText().toString().isEmpty() || etSubShortForm.getText().toString().isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "There are one or more missing fields! Please fill them up to continue!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                etSubCode.setText(etSubCode.getText().toString().trim().toUpperCase());
+                etFacultyName.setText(etFacultyName.getText().toString().trim());
+                etSubName.setText(etSubName.getText().toString().trim());
+                etSubShortForm.setText(etSubShortForm.getText().toString().trim().toUpperCase());
+                etZoomLink.setText(etZoomLink.getText().toString().trim());
+
+                if (etSubCode.getText().length() > 7 || !etSubCode.getText().toString().matches("[A-Z]+[0-9]+")) {
                     Toast.makeText(getApplicationContext(), "Invalid subject code! Please re-enter!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (etSubShortForm.getText().length() > 3) {
-                    Toast.makeText(getApplicationContext(), "Please choose a short form having less than 5 characters!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please choose a short form having less than 3 characters!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!Patterns.WEB_URL.matcher(etZoomLink.getText().toString()).matches()) {
@@ -111,8 +122,8 @@ public class AddSubjectActivity extends AppCompatActivity {
     }
 
     private void setTimetable() {
+        days = new boolean[7];
         if (obj != null) {
-            days = new boolean[7];
             for (int i = 0; i < 7; i++) {
                 if (obj.getTimetable().containsKey(i)) days[i] = true;
             }
@@ -157,7 +168,7 @@ public class AddSubjectActivity extends AppCompatActivity {
                             for (int j = 0; j < hoursList.length; j++) {
                                 hoursList[j] = CommonUtils.getOrdinalStringFromInt(j+1) + " Hour";
                             }
-                            new AlertDialog.Builder(AddSubjectActivity.this, R.style.MagentaTextTheme)
+                            new AlertDialog.Builder(AddSubjectActivity.this, R.style.DayPickerTheme)
                                     .setTitle("Choose hour(s) on " + days[i] + ":")
                                     .setMultiChoiceItems(hoursList, selectedHrs, new DialogInterface.OnMultiChoiceClickListener() {
                                         @Override
@@ -188,7 +199,7 @@ public class AddSubjectActivity extends AppCompatActivity {
                                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    new AlertDialog.Builder(AddSubjectActivity.this)
+                                    new AlertDialog.Builder(AddSubjectActivity.this, R.style.DayPickerTheme)
                                             .setTitle("Cancel adding subject?")
                                             .setMessage("You'll have to repeat this process again next time!")
                                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -223,9 +234,7 @@ public class AddSubjectActivity extends AppCompatActivity {
                 timings,
                 zoomLink
         );
-        Gson gson = new Gson();
-        String json = gson.toJson(obj);
-        SharedPref.putString(getApplicationContext(), String.valueOf(subIdx), json);
+        SharedPref.putString(getApplicationContext(), String.valueOf(subIdx), new Gson().toJson(obj));
         SharedPref.putBoolean(getApplicationContext(), "updateFlag1", true);
         SharedPref.putBoolean(getApplicationContext(), "updateFlag2", true);
     }
