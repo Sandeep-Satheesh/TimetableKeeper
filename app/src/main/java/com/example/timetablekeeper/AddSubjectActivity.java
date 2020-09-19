@@ -27,6 +27,7 @@ public class AddSubjectActivity extends AppCompatActivity {
     TextInputEditText etSubCode, etSubName, etSubShortForm, etFacultyName, etZoomLink;
     TextView btnCancel, btnOK, btnSaveWithoutChangingTT;
     AppCompatCheckBox cbPracticalSubj;
+    volatile boolean scheduleUpdated = false;
     boolean[] days;
     SubjectObj obj;
 
@@ -83,7 +84,7 @@ public class AddSubjectActivity extends AppCompatActivity {
                 etSubShortForm.setText(etSubShortForm.getText().toString().trim().toUpperCase());
                 etZoomLink.setText(etZoomLink.getText().toString().trim());
 
-                if (etSubCode.getText().length() > 7 || !etSubCode.getText().toString().matches("[A-Z]+[0-9]+")) {
+                /*if (etSubCode.getText().length() > 7 || !etSubCode.getText().toString().matches("[A-Z]+[0-9]+")) {
                     Toast.makeText(getApplicationContext(), "Invalid subject code! Please re-enter!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -98,8 +99,8 @@ public class AddSubjectActivity extends AppCompatActivity {
                 if (getIntent().getStringExtra("subCode") == null && CommonUtils.getSubjectObjFromSubCode(getApplicationContext(), etSubCode.getText().toString()) != null) {
                     etSubCode.setError("There's already a subject with the same subject code!");
                     return;
-                }
-                if (view == btnOK) setTimetable();
+                }*/
+                if (view.getId() == R.id.cmd_addsub) setTimetable();
                 else {
                     insertSubjectIntoSharedPref(etSubCode.getText().toString(),
                             etSubName.getText().toString(),
@@ -184,6 +185,7 @@ public class AddSubjectActivity extends AppCompatActivity {
                                             for (int x = 0; x < a.size(); x++)
                                                 s.append(a.get(x));
                                             timings.put((Integer) finalI, s.toString());
+                                            scheduleUpdated = true;
                                             if (timings.keySet().size() == finalCt) {
                                                 insertSubjectIntoSharedPref(
                                                         etSubCode.getText().toString(),
@@ -237,5 +239,6 @@ public class AddSubjectActivity extends AppCompatActivity {
         SharedPref.putString(getApplicationContext(), String.valueOf(subIdx), new Gson().toJson(obj));
         SharedPref.putBoolean(getApplicationContext(), "updateFlag1", true);
         SharedPref.putBoolean(getApplicationContext(), "updateFlag2", true);
+        SharedPref.putBoolean(getApplicationContext(), "scheduleUpdatedFlg", scheduleUpdated);
     }
 }

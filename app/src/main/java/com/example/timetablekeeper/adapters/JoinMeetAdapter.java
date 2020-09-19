@@ -37,6 +37,14 @@ public class JoinMeetAdapter extends RecyclerView.Adapter<JoinMeetAdapter.Subjec
         else return null;
     }
 
+    public ArrayList<SubjectObj> getObjs() {
+        return objs;
+    }
+
+    public ArrayList<Integer> getHours() {
+        return hours;
+    }
+
     public void clear() {
         objs.clear();
         hours.clear();
@@ -44,10 +52,6 @@ public class JoinMeetAdapter extends RecyclerView.Adapter<JoinMeetAdapter.Subjec
     }
     public SubjectObj getCurrentSub() {
         return currentSub;
-    }
-
-    public int getCurrentDay() {
-        return currentDay;
     }
 
     public int getCurrentHour() {
@@ -117,7 +121,7 @@ public class JoinMeetAdapter extends RecyclerView.Adapter<JoinMeetAdapter.Subjec
 
     @Override
     public int getItemCount() {
-        return objs.size();
+        return objs == null ? 0 : objs.size();
     }
 
     public class SubjectsViewHolder extends RecyclerView.ViewHolder {

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".JoinMeetFromPCActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:layout_marginStart="10sp"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:text="Join Class From PC" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.transferwise.sequencelayout.SequenceLayout
+        android:id="@+id/seqlayout"
+        android:layout_margin="10sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40sp">
+
+        <com.transferwise.sequencelayout.SequenceStep
+            android:id="@+id/seqstep1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:anchor="Step 1"
+            app:title="Check Connectivity" />
+
+        <com.transferwise.sequencelayout.SequenceStep
+            android:id="@+id/seqstep2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:anchor="Step 2"
+            app:title="Check Permissions" />
+
+        <com.transferwise.sequencelayout.SequenceStep
+            android:id="@+id/seqstep3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:anchor="Step 3"
+            app:title="Determine Target Computer" />
+
+        <com.transferwise.sequencelayout.SequenceStep
+            android:id="@+id/seqstep4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:anchor="Step 4"
+            app:title="Send Message" />
+
+        <com.transferwise.sequencelayout.SequenceStep
+            android:id="@+id/seqstep5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:anchor="Step 5"
+            app:title="Done" />
+    </com.transferwise.sequencelayout.SequenceLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="12dp"
+        android:layout_marginStart="10sp"
+        android:layout_gravity="center"
+        android:id="@+id/tv_resendcmd_suggestion"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:text="It's been some time! Would you like to resend the command?" />
+
+    <Button
+        android:layout_weight="1"
+        android:layout_gravity="end"
+        android:layout_marginEnd="30sp"
+        android:id="@+id/btn_resendcmd"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@drawable/roundedrect_bg"
+        android:backgroundTint="@color/colorPrimary"
+        android:elevation="6dp"
+        android:layout_marginBottom="10sp"
+        android:src="@drawable/ic_joinmeet"
+        android:text=" Resend command "
+        android:textColor="@color/white"
+        android:translationZ="5dp" />
+
+</LinearLayout>

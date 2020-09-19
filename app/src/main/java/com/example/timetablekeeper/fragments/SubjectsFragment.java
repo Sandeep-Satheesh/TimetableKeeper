@@ -1,18 +1,23 @@
 package com.example.timetablekeeper.fragments;
 
+import android.app.AlarmManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.core.app.AlarmManagerCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +29,7 @@ import com.example.timetablekeeper.AddSubjectActivity;
 import com.example.timetablekeeper.R;
 import com.example.timetablekeeper.adapters.AddSubjectAdapter;
 import com.example.timetablekeeper.models.SubjectObj;
+import com.example.timetablekeeper.utils.CommonUtils;
 import com.example.timetablekeeper.utils.SharedPref;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
@@ -59,12 +65,7 @@ public class SubjectsFragment extends Fragment {
 
         swipeRefreshLayout = v.findViewById(R.id.swiperefresh_addsub);
         swipeRefreshLayout.setColorSchemeColors(ColorGenerator.DEFAULT.getRandomColor(), ColorGenerator.DEFAULT.getRandomColor(), ColorGenerator.DEFAULT.getRandomColor());
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new populateSubjectsList().execute();
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(() -> new populateSubjectsList().execute());
     }
 
     @Override
@@ -78,15 +79,6 @@ public class SubjectsFragment extends Fragment {
             subRVAdapter.notifyDataSetChanged();
             subRV.scheduleLayoutAnimation();
         }
-    }
-
-    @Override
-    public void onResume() {
-        if (!viewedOnce || SharedPref.getBoolean(getContext(), "updateFlag2")) {
-            SharedPref.putBoolean(getContext(), "updateFlag2", false);
-            new populateSubjectsList().execute();
-        }
-        super.onResume();
     }
 
     private class populateSubjectsList extends AsyncTask<Void, Void, Void> {

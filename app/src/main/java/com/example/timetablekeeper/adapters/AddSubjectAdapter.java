@@ -112,6 +112,7 @@ public class AddSubjectAdapter extends RecyclerView.Adapter<AddSubjectAdapter.Su
                                     SharedPref.putInt(c, "subj_count", ct - 1);
                                     SharedPref.putBoolean(c, "updateFlag1", true);
                                     SharedPref.putBoolean(c, "updateFlag2", true);
+                                    SharedPref.putBoolean(c, "scheduleUpdatedFlg", false);
                                 }
                             })
                             .setNegativeButton("No", null)
